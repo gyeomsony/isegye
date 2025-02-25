@@ -12,8 +12,15 @@ class TabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         print("뷰디드로드 실행됨")
+        setupTabBar()
         setupViewControllers()
+        setupTabBarAppearance()
         selectedIndex = 0
+    }
+    
+    private func setupTabBar() {
+        let TabBar = TabBar()
+        setValue(TabBar, forKey: "tabBar")
     }
         
     private func setupViewControllers() {
@@ -46,8 +53,8 @@ class TabBarController: UITabBarController {
         // 카메라 탭
         CameraViewController.tabBarItem = UITabBarItem(
             title: nil,
-            image: UIImage(systemName: "camera"),
-            selectedImage: UIImage(systemName: "camera.fill")
+            image: UIImage(systemName: "circle.square"),
+            selectedImage: UIImage(systemName: "circle.square.fill")
         )
         
         // 검색 탭
@@ -68,5 +75,34 @@ class TabBarController: UITabBarController {
         self.tabBar.unselectedItemTintColor = .darkGray
         
         self.viewControllers = [mainTab, heartTab, CameraTab, SearchTab, SettingTab]
+    }
+    
+    private func setupTabBarAppearance() {
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .black
+        
+        // 선택되지 않은 상태 스타일
+        appearance.stackedLayoutAppearance.normal.iconColor = .darkGray
+        
+        // 선택된 상태 스타일
+        appearance.stackedLayoutAppearance.selected.iconColor = .white
+        
+        // SE 모델일 경우 타이틀 위치 조정
+        if UIScreen.isiPhoneSE {
+            appearance.stackedLayoutAppearance.normal.titlePositionAdjustment = UIOffset(horizontal: 0, vertical: -6)
+            appearance.stackedLayoutAppearance.selected.titlePositionAdjustment = UIOffset(horizontal: 0, vertical: -6)
+        }
+        
+        // SE 모델일 경우 아이콘 위치 조정
+        if UIScreen.isiPhoneSE {
+            for item in tabBar.items ?? [] {
+                item.imageInsets = UIEdgeInsets(top: 3, left: 0, bottom: -3, right: 0)
+                item.titlePositionAdjustment = UIOffset(horizontal: 0, vertical: -3)
+            }
+        }
+        
+        tabBar.standardAppearance = appearance
+        tabBar.scrollEdgeAppearance = tabBar.standardAppearance  // 배경이 사라지지 않도록 설정함
     }
 }
