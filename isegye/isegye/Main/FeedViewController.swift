@@ -38,9 +38,9 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     private func loadData() {
         posts = [
-            Post(nickname: "john_doe", time: "2h ago", content: "Just wrapped up an amazing coding session! 🟢", likes: 25, comments: 5),
-            Post(nickname: "jane_smith", time: "4h ago", content: "Beautiful sunset at the beach today! 🟢", likes: 156, comments: 12),
-            Post(nickname: "mike_wilson", time: "6h ago", content: "Just published my first blog post on modern web development!", likes: 30, comments: 7)
+            Post(nickname: "aaaadddd", time: "2h ago", content: "오늘 심심하네 다들 뭐하니", likes: 25, comments: 5),
+            Post(nickname: "adad_aa", time: "4h ago", content: "공부하고 싶은거 각자 적어보고 가자", likes: 156, comments: 12),
+            Post(nickname: "aden", time: "6h ago", content: " 긴글 테스트 긴글 테스트 긴글 테스트 긴글 테스트 긴글 테스트 긴글 테스트 긴글 테스트 긴글 테스트 긴글 테스트 긴글 테스트 긴글 테스트 긴글 테스트 긴글 테스트 긴글 테스트 긴글 테스트 긴글 테스트 긴글 테스트 긴글 테스트 긴글 테스트 긴글 테스트 긴글 테스트 긴글 테스트 긴글 테스트 긴글 테스트 긴글 테스트 긴글 테스트 긴글 테스트 긴글 테스트 긴글 테스트 긴글 테스트 긴글 테스트 긴글 테스트 긴글 테스트 긴글 테스트 긴글 테스트 긴글 테스트 긴글 테스트 긴글 테스트 긴글 테스트 긴글 테스트 긴글 테스트 긴글 테스트 긴글 테스트", likes: 30, comments: 7)
         ]
     }
     

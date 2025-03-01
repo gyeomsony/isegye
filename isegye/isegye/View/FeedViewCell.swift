@@ -46,37 +46,20 @@ class FeedViewCell: UITableViewCell {
         return label
     }()
     
+    // 버튼 설정은 맨 아래 Extension으로 분리함
     // 좋아요 버튼
-    let likeButton: UIButton = {
-        let button = UIButton(type: .system)
-        
-        var config = UIButton.Configuration.plain()
-        config.image = UIImage(systemName: "heart")
-        config.title = "25"
-        config.imagePadding = 2
-        config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: -2, bottom: 0, trailing: 0)
-        button.configuration = config
-        
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 10, weight: .medium)
-        button.tintColor = .gray
-        return button
-    }()
+    let likeButton: UIButton = UIButton.createCustomButton(
+        imageName: "heart",
+        title: "10",
+        imageSize: 15,
+        textSize: 10)
     
     // 댓글 버튼
-    let commentButton: UIButton = {
-        let button = UIButton(type: .system)
-        
-        var config = UIButton.Configuration.plain()
-        config.image = UIImage(systemName: "bubble.right")
-        config.title = "10"
-        config.imagePadding = 2
-        config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
-        button.configuration = config
-        
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 10, weight: .medium)
-        button.tintColor = .gray
-        return button
-    }()
+    let commentButton: UIButton = UIButton.createCustomButton(
+        imageName: "comment",
+        title: "10",
+        imageSize: 15,
+        textSize: 10)
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -139,5 +122,34 @@ class FeedViewCell: UITableViewCell {
         contentLabel.text = post.content
         likeButton.configuration?.title = "\(post.likes)"
         commentButton.configuration?.title = "\(post.comments)"
+    }
+}
+
+// UIButton 확장
+extension UIButton {
+    static func createCustomButton(imageName: String, title: String, imageSize: CGFloat, textSize: CGFloat) -> UIButton {
+        let button = UIButton(type: .system)
+        
+        var config = UIButton.Configuration.plain()
+        config.image = UIImage(
+            systemName: imageName,
+            withConfiguration: UIImage.SymbolConfiguration(pointSize: imageSize, weight: .light, scale: .default)
+        )
+        
+        // 텍스트 스타일 설정
+        let attributedString = NSAttributedString(
+            string: title,
+            attributes: [
+                .font: UIFont.systemFont(ofSize: textSize, weight: .light),
+                .foregroundColor: UIColor.gray
+            ]
+        )
+        config.attributedTitle = AttributedString(attributedString)
+        
+        config.imagePadding = 2
+        config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: -2, bottom: 0, trailing: 0)
+        button.configuration = config
+        button.tintColor = .gray
+        return button
     }
 }
