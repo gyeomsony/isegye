@@ -1,5 +1,5 @@
 //
-//  FeedViewCell.swift
+//  FeedTableViewCell.swift
 //  isegye
 //
 //  Created by 손겸 on 3/1/25.
@@ -7,10 +7,11 @@
 
 import UIKit
 import SnapKit
+import Combine
 
-class FeedViewCell: UITableViewCell {
+class FeedTableViewCell: UITableViewCell {
     
-    static let reuseIdentifier = "FeedViewCell"
+    static let reuseIdentifier = "FeedTableViewCell"
     
     // 프로필 이미지
     let profileImageView: UIImageView = {
@@ -20,6 +21,7 @@ class FeedViewCell: UITableViewCell {
         imageView.layer.cornerRadius = 20
         imageView.layer.borderWidth = 1
         imageView.layer.borderColor = UIColor.lightGray.cgColor
+        
         return imageView
     }()
     
@@ -27,6 +29,7 @@ class FeedViewCell: UITableViewCell {
     let nicknameLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14, weight: .bold)
+        
         return label
     }()
     
@@ -35,6 +38,7 @@ class FeedViewCell: UITableViewCell {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 12, weight: .light)
         label.textColor = .gray
+        
         return label
     }()
     
@@ -43,6 +47,7 @@ class FeedViewCell: UITableViewCell {
         let label = UILabel()
         label.numberOfLines = 0
         label.font = UIFont.systemFont(ofSize: 14)
+        
         return label
     }()
     
@@ -52,18 +57,31 @@ class FeedViewCell: UITableViewCell {
         imageName: "heart",
         title: "10",
         imageSize: 15,
-        textSize: 10)
+        textSize: 15
+    )
     
     // 댓글 버튼
     let commentButton: UIButton = UIButton.createCustomButton(
-        imageName: "comment",
+        imageName: "bubble.right",
         title: "10",
         imageSize: 15,
-        textSize: 10)
+        textSize: 15
+    )
+    
+    // ViewModel 프로퍼티
+    var viewModel: FeedViewModel? {
+        didSet {
+            bindViewModel()
+        }
+    }
+    
+    private var cancellables: Set<AnyCancellable> = []
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
         setupLayout()
+        setupButtonActions()
     }
     
     required init?(coder: NSCoder) {
@@ -122,6 +140,30 @@ class FeedViewCell: UITableViewCell {
         contentLabel.text = post.content
         likeButton.configuration?.title = "\(post.likes)"
         commentButton.configuration?.title = "\(post.comments)"
+        
+        // FeedViewModel에 상태 업데이트
+        viewModel?.isLiked = false // 초기 상태 설정
+    }
+    
+    // 버튼 액션 설정
+    private func setupButtonActions() {
+        likeButton.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
+    }
+    
+    @objc private func likeButtonTapped() {
+        viewModel?.toggleLike()
+    }
+    
+    // ViewModel 바인딩
+    private func bindViewModel() {
+        viewModel?.$isLiked
+            .receive(on: RunLoop.main)
+            .sink { [weak self] isLiked in
+                self?.likeButton.isSelected = isLiked
+                self?.likeButton.tintColor = isLiked ? .systemRed : .gray
+                self?.likeButton.setImage(UIImage(systemName: isLiked ? "heart.fill" : "heart"), for: .normal)
+            }
+            .store(in: &cancellables)
     }
 }
 
@@ -137,19 +179,55 @@ extension UIButton {
         )
         
         // 텍스트 스타일 설정
-        let attributedString = NSAttributedString(
-            string: title,
-            attributes: [
-                .font: UIFont.systemFont(ofSize: textSize, weight: .light),
-                .foregroundColor: UIColor.gray
-            ]
-        )
-        config.attributedTitle = AttributedString(attributedString)
+        config.title = title
+        config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
+            var outgoing = incoming
+            outgoing.font = UIFont.systemFont(ofSize: textSize, weight: .light)
+            outgoing.foregroundColor = UIColor.gray
+            return outgoing
+        }
         
         config.imagePadding = 2
         config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: -2, bottom: 0, trailing: 0)
+        
+        // 배경 설정
+        config.background.backgroundColor = .clear // 배경색을 투명하게 설정
+        config.background.strokeColor = .clear // 테두리 색상을 투명하게 설정
+        
         button.configuration = config
+        
+        // 기본 색상
         button.tintColor = .gray
+        
+        // configurationUpdateHandler를 사용하여 highlighted 상태 처리
+        button.configurationUpdateHandler = { button in
+            var updatedConfig = button.configuration
+            switch button.state {
+            case .highlighted:
+                // highlighted 상태에서 이미지와 텍스트 색상 변경
+                updatedConfig?.image = UIImage(
+                    systemName: "\(imageName).fill",
+                    withConfiguration: UIImage.SymbolConfiguration(pointSize: imageSize, weight: .light, scale: .default)
+                )?.withTintColor(.systemRed, renderingMode: .alwaysOriginal)
+                updatedConfig?.baseForegroundColor = .systemRed
+            case .selected:
+                // selected 상태에서 이미지와 텍스트 색상 변경
+                updatedConfig?.image = UIImage(
+                    systemName: "\(imageName).fill",
+                    withConfiguration: UIImage.SymbolConfiguration(pointSize: imageSize, weight: .light, scale: .default)
+                )?.withTintColor(.systemRed, renderingMode: .alwaysOriginal)
+                updatedConfig?.baseForegroundColor = .systemRed
+            default:
+                // 기본 상태
+                updatedConfig?.image = UIImage(
+                    systemName: imageName,
+                    withConfiguration: UIImage.SymbolConfiguration(pointSize: imageSize, weight: .light, scale: .default)
+                )?.withTintColor(.gray, renderingMode: .alwaysOriginal)
+                updatedConfig?.baseForegroundColor = .gray
+            }
+            button.configuration = updatedConfig
+        }
+        
         return button
     }
 }

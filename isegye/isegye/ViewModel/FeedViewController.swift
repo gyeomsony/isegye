@@ -31,7 +31,7 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         tableView.frame = view.bounds
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.register(FeedViewCell.self, forCellReuseIdentifier: FeedViewCell.reuseIdentifier)
+        tableView.register(FeedTableViewCell.self, forCellReuseIdentifier: FeedTableViewCell.reuseIdentifier)
         
         view.addSubview(tableView)
     }
@@ -49,12 +49,16 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: FeedViewCell.reuseIdentifier, for: indexPath) as? FeedViewCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: FeedTableViewCell.reuseIdentifier, for: indexPath) as? FeedTableViewCell else {
             return UITableViewCell()
         }
         
         let post = posts[indexPath.row]
         cell.configure(with: post)
+        
+        let viewModel = FeedViewModel()
+        cell.viewModel = viewModel
+        
         return cell
     }
 }
