@@ -24,20 +24,20 @@ class TabBarController: UITabBarController {
     }
         
     private func setupViewControllers() {
-        let mainViewController = MainViewController()
+        let feedViewController = FeedViewController()
         let heartViewController = HeartViewController()
         let CameraViewController = CameraViewController()
         let SearchViewController = SearchViewController()
         let SettingViewController = SettingViewController()
         
-        let mainTab = UINavigationController(rootViewController: mainViewController)
+        let feedTab = UINavigationController(rootViewController: feedViewController)
         let heartTab = UINavigationController(rootViewController: heartViewController)
         let CameraTab = UINavigationController(rootViewController: CameraViewController)
         let SearchTab = UINavigationController(rootViewController: SearchViewController)
         let SettingTab = UINavigationController(rootViewController: SettingViewController)
         
         // 메인 탭
-        mainViewController.tabBarItem = UITabBarItem(
+        feedViewController.tabBarItem = UITabBarItem(
             title: nil,
             image: UIImage(systemName: "house"),
             selectedImage: UIImage(systemName: "house.fill")
@@ -74,7 +74,7 @@ class TabBarController: UITabBarController {
         self.tabBar.tintColor = .white
         self.tabBar.unselectedItemTintColor = .darkGray
         
-        self.viewControllers = [mainTab, heartTab, CameraTab, SearchTab, SettingTab]
+        self.viewControllers = [feedTab, heartTab, CameraTab, SearchTab, SettingTab]
     }
     
     private func setupTabBarAppearance() {
